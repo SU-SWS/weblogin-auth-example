@@ -49,7 +49,7 @@ export default async function Home() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Card 1: Protected Page */}
             <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex flex-col">
               <h3 className="text-xl font-bold mb-3 text-blue-400">Protected Page</h3>
@@ -81,6 +81,17 @@ export default async function Home() {
               <Link href="/api/protected" className="block w-full text-center bg-gray-700 hover:bg-gray-600 text-white py-2 rounded transition-colors">
                 Test API
               </Link>
+            </div>
+
+            {/* Card 4: Metadata */}
+            <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex flex-col">
+              <h3 className="text-xl font-bold mb-3 text-yellow-400">SAML Metadata</h3>
+              <p className="text-gray-400 mb-6 flex-grow">
+                View the generated Service Provider metadata XML. This is used to configure the Identity Provider.
+              </p>
+              <a href="/api/auth/metadata" target="_blank" className="block w-full text-center bg-gray-700 hover:bg-gray-600 text-white py-2 rounded transition-colors">
+                View Metadata
+              </a>
             </div>
           </div>
         </main>

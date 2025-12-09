@@ -1,0 +1,22 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+# Use the Next.js runtime
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Vault plugin for large environment variables (SSL certificates)
+# This stores large secrets in Netlify's blob store to avoid AWS Lambda's 4KB limit
+[[plugins]]
+  package = "netlify-plugin-vault-variables"
+  [plugins.inputs]
+      # The vault service endpoint
+      endpoint = 'https://vault.stanford.edu'
+      # Order doesn't matter here as these will be fetched asynchronously. Try not to have dupes.
+      secrets = ['secret/data/projects/uit-webservices/weblogin-auth-sdk']
+      # Set which environment variables to use for the approle login
+      secretId = 'VAULT_SECRET_ID'
+      roleId = 'VAULT_ROLE_ID'
+      # Set to true if you want to add the context to the .env file for runtime.
+      addContext = true

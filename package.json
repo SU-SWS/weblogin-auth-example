@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "certs": "node ./scripts/generate-certs.js"
+    "certs": "node ./scripts/generate-certs.js",
+    "vault": "netlify-plugin-vault-variables",
+    "vault:local": "NODE_ENV=development netlify-plugin-vault-variables"
   },
   "dependencies": {
     "next": "16.0.7",
@@ -22,6 +24,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.0.7",
+    "netlify-plugin-vault-variables": "^3.0.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

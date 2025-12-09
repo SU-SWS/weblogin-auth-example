@@ -48,6 +48,7 @@ const newEnvVars = `
 WEBLOGIN_AUTH_SAML_PRIVATE_KEY="${key.trim()}"
 WEBLOGIN_AUTH_SAML_DECRYPTION_KEY="${key.trim()}"
 WEBLOGIN_AUTH_SAML_CERT="${cert.trim()}"
+WEBLOGIN_AUTH_SAML_DECRYPTION_CERT="${cert.trim()}"
 `;
 
 fs.appendFileSync(envPath, newEnvVars);

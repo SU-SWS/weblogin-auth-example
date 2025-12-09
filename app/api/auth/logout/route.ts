@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 
-export async function POST() {
+export async function GET(request: Request) {
   await auth.logout();
-  return Response.redirect('/');
+  const url = new URL('/', request.url);
+  return Response.redirect(url);
 }

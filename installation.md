@@ -6,14 +6,14 @@ This guide provides step-by-step instructions for integrating the `weblogin-auth
 
 - A Next.js application (App Router recommended)
 - Node.js 18+
-- Access to register a Service Provider (SP) with Stanford UIT
+- Access to register a Service Provider (SP) with Stanford UIT (spdb.stanford.edu)
 
 ## Step 1: Install the SDK
 
 Install the package using npm:
 
 ```bash
-npm install weblogin-auth-sdk
+npm install weblogin-auth-sdk@^3
 ```
 
 ## Step 2: Configure Environment Variables
@@ -21,11 +21,11 @@ npm install weblogin-auth-sdk
 Create or update your `.env.local` file with the following variables. You will need to generate a secure random string for the session secret.
 
 ```bash
-# The Entity ID for your application (e.g., https://your-app.stanford.edu/shibboleth)
-WEBLOGIN_AUTH_SAML_ENTITY="https://localhost:3000/shibboleth"
+# The Entity ID for your application (e.g., https://your-app.stanford.edu)
+WEBLOGIN_AUTH_SAML_ENTITY="https://localhost:3000"
 
 # The base URL of your application
-WEBLOGIN_AUTH_SAML_RETURN_ORIGIN="https://localhost:3000"
+WEBLOGIN_AUTH_SAML_RETURN_ORIGIN="https://localhost:3000/api/auth/callback"
 
 # A secure random string (min 32 chars) for encrypting session cookies
 WEBLOGIN_AUTH_SESSION_SECRET="change-this-to-a-secure-random-32-char-string"
@@ -68,8 +68,11 @@ export const auth = createWebLoginNext({
     // Optional: Signing and Decryption keys
     privateKey: process.env.WEBLOGIN_AUTH_SAML_PRIVATE_KEY,
     decryptionPvk: process.env.WEBLOGIN_AUTH_SAML_DECRYPTION_KEY,
-    cert: process.env.WEBLOGIN_AUTH_SAML_CERT,
     decryptionCert: process.env.WEBLOGIN_AUTH_SAML_CERT,
+
+    // Optional: Skip ACS urls in metadata (must have signing cert)
+    // Useful if you have multiple urls like preview builds and don't want to add them all.
+    skipRequestAcsUrl: true,
   },
   session: {
     name: 'weblogin-auth-session',

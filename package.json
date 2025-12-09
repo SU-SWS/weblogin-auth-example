@@ -6,7 +6,8 @@
     "dev": "next dev --experimental-https",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "certs": "node ./scripts/generate-certs.js"
   },
   "dependencies": {
     "next": "16.0.7",

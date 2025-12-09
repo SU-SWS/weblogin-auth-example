@@ -10,6 +10,6 @@ export async function GET() {
 
   return NextResponse.json({
     message: 'This is a protected API route',
-    user: session.user
+    session: session
   });
 }

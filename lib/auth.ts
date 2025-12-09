@@ -64,6 +64,7 @@ export function getAuth() {
 
         // Base URL for callback - SDK appends /api/auth/callback
         returnToOrigin: process.env.URL || process.env.WEBLOGIN_AUTH_SAML_RETURN_ORIGIN!,
+
         // ACS URL path where SAML responses are sent
         returnToPath: '/api/auth/callback',
 

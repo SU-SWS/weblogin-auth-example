@@ -63,7 +63,7 @@ export function getAuth() {
         idpCert: idps.prod.cert,
 
         // Base URL for callback - SDK appends /api/auth/callback
-        returnToOrigin: process.env.DEPLOY_PRIME_URL || process.env.WEBLOGIN_AUTH_SAML_RETURN_ORIGIN!,
+        returnToOrigin: process.env.URL || process.env.WEBLOGIN_AUTH_SAML_RETURN_ORIGIN!,
         // ACS URL path where SAML responses are sent
         returnToPath: '/api/auth/callback',
 
@@ -75,7 +75,7 @@ export function getAuth() {
         signMetadata: true,
 
         // Use current ACS URL from metadata instead of hardcoded one in IDP.
-        skipRequestAcsUrl: false,
+        skipRequestAcsUrl: process.env.WEBLOGIN_AUTH_SAML_SKIP_ACS_VALIDATION === 'true',
 
         // DECRYPTION KEYS: Decrypt encrypted SAML assertions
         decryptionPvk: process.env.WEBLOGIN_AUTH_SAML_DECRYPTION_KEY!,

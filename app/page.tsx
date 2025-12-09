@@ -160,7 +160,25 @@ export default async function Home() {
         </article>
 
         {/*
-          CARD 6: GitHub Repository Link
+          CARD 6: Skip Validation Demo
+          Explains how to use one IdP config for multiple environments
+        */}
+        <article className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex flex-col">
+          <h2 className="text-xl font-bold mb-3 text-orange-400">Multi-Env Support</h2>
+          <p className="text-gray-300 mb-6 grow">
+            Learn how to use a single IdP configuration for localhost, deploy previews, and production using <code>skipEndpointValidation</code>.
+          </p>
+          <Link
+            href="/skip-validation"
+            className="block w-full text-center bg-gray-700 hover:bg-gray-600 text-white py-2 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-gray-800"
+            aria-label="View Skip Validation Documentation"
+          >
+            Learn More
+          </Link>
+        </article>
+
+        {/*
+          CARD 7: GitHub Repository Link
           Links to the SDK source code
         */}
         <article className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex flex-col">

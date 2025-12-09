@@ -25,7 +25,7 @@ Create or update your `.env.local` file with the following variables. You will n
 WEBLOGIN_AUTH_SAML_ENTITY="https://localhost:3000"
 
 # The base URL of your application
-WEBLOGIN_AUTH_SAML_RETURN_ORIGIN="https://localhost:3000/api/auth/callback"
+WEBLOGIN_AUTH_SAML_RETURN_ORIGIN="https://localhost:3000"
 
 # A secure random string (min 32 chars) for encrypting session cookies
 WEBLOGIN_AUTH_SESSION_SECRET="change-this-to-a-secure-random-32-char-string"
@@ -47,6 +47,7 @@ For production apps or to support encrypted assertions, you need a signing/decry
     WEBLOGIN_AUTH_SAML_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----..."
     WEBLOGIN_AUTH_SAML_DECRYPTION_KEY="-----BEGIN PRIVATE KEY-----..."
     WEBLOGIN_AUTH_SAML_CERT="-----BEGIN CERTIFICATE-----..."
+    WEBLOGIN_AUTH_SAML_DECRYPTION_CERT="-----BEGIN CERTIFICATE-----..."
     ```
 
 ## Step 4: Initialize the SDK
@@ -60,26 +61,24 @@ import { idps } from 'weblogin-auth-sdk';
 export const auth = createWebLoginNext({
   saml: {
     issuer: process.env.WEBLOGIN_AUTH_SAML_ENTITY!,
-    // Use the production IdP preset (or idps.uat for testing)
+    // Use the production IdP preset
     entryPoint: idps.prod.entryPoint,
     idpCert: idps.prod.cert,
     returnToOrigin: process.env.WEBLOGIN_AUTH_SAML_RETURN_ORIGIN!,
-    
-    // Optional: Signing and Decryption keys
-    privateKey: process.env.WEBLOGIN_AUTH_SAML_PRIVATE_KEY,
-    decryptionPvk: process.env.WEBLOGIN_AUTH_SAML_DECRYPTION_KEY,
-    decryptionCert: process.env.WEBLOGIN_AUTH_SAML_CERT,
-
-    // Optional: Skip ACS urls in metadata (must have signing cert)
-    // Useful if you have multiple urls like preview builds and don't want to add them all.
+    // Optional: Signing keys
+    privateKey: process.env.WEBLOGIN_AUTH_SAML_PRIVATE_KEY!,
+    cert: process.env.WEBLOGIN_AUTH_SAML_CERT!,
+    // signMetadata: true,
     skipRequestAcsUrl: true,
+    // Optional: Decryption keys
+    decryptionPvk: process.env.WEBLOGIN_AUTH_SAML_DECRYPTION_KEY!,
+    decryptionCert: process.env.WEBLOGIN_AUTH_SAML_DECRYPTION_CERT!,
   },
   session: {
-    name: 'weblogin-auth-session',
     secret: process.env.WEBLOGIN_AUTH_SESSION_SECRET!,
     cookie: {
-      secure: process.env.NODE_ENV === 'production',
-    }
+      secure: true,
+    },
   },
 });
 ```
@@ -114,9 +113,9 @@ export async function POST(request: Request) {
 ```typescript
 import { auth } from '@/lib/auth';
 
-export async function POST() {
+export async function GET(request: Request) {
   await auth.logout();
-  return Response.redirect('/');
+  return Response.redirect('/', request.url);
 }
 ```
 

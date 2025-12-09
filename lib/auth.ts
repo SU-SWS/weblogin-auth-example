@@ -13,13 +13,11 @@ export const auth = createWebLoginNext({
     cert: process.env.WEBLOGIN_AUTH_SAML_CERT!,
     // signMetadata: true,
     skipRequestAcsUrl: true,
-
     // Optional: Decryption keys
     decryptionPvk: process.env.WEBLOGIN_AUTH_SAML_DECRYPTION_KEY!,
     decryptionCert: process.env.WEBLOGIN_AUTH_SAML_DECRYPTION_CERT!,
   },
   session: {
-    name: 'weblogin-auth',
     secret: process.env.WEBLOGIN_AUTH_SESSION_SECRET!,
     cookie: {
       secure: true,

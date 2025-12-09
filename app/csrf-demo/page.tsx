@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { auth } from '@/lib/auth';
 import { AuthUtils } from 'weblogin-auth-sdk';
 import { revalidatePath } from 'next/cache';
@@ -118,28 +117,28 @@ export default async function CsrfDemoPage() {
         <h2 className="text-xl font-bold mb-4 text-purple-400">How It Works</h2>
         <div className="space-y-4 text-gray-300">
           <div className="flex gap-4">
-            <div className="flex-shrink-0 w-8 h-8 bg-purple-900 text-purple-300 rounded-full flex items-center justify-center font-bold">1</div>
+            <div className="shrink-0 w-8 h-8 bg-purple-900 text-purple-300 rounded-full flex items-center justify-center font-bold">1</div>
             <div>
               <p className="font-medium text-white">Generate a Token</p>
               <p className="text-sm text-gray-400">When rendering the form, generate a unique CSRF token and store it in the user&apos;s session.</p>
             </div>
           </div>
           <div className="flex gap-4">
-            <div className="flex-shrink-0 w-8 h-8 bg-purple-900 text-purple-300 rounded-full flex items-center justify-center font-bold">2</div>
+            <div className="shrink-0 w-8 h-8 bg-purple-900 text-purple-300 rounded-full flex items-center justify-center font-bold">2</div>
             <div>
               <p className="font-medium text-white">Include in Form</p>
               <p className="text-sm text-gray-400">Add the token as a hidden field in your form.</p>
             </div>
           </div>
           <div className="flex gap-4">
-            <div className="flex-shrink-0 w-8 h-8 bg-purple-900 text-purple-300 rounded-full flex items-center justify-center font-bold">3</div>
+            <div className="shrink-0 w-8 h-8 bg-purple-900 text-purple-300 rounded-full flex items-center justify-center font-bold">3</div>
             <div>
               <p className="font-medium text-white">Validate on Submit</p>
               <p className="text-sm text-gray-400">Compare the submitted token with the one stored in the session using constant-time comparison.</p>
             </div>
           </div>
           <div className="flex gap-4">
-            <div className="flex-shrink-0 w-8 h-8 bg-purple-900 text-purple-300 rounded-full flex items-center justify-center font-bold">4</div>
+            <div className="shrink-0 w-8 h-8 bg-purple-900 text-purple-300 rounded-full flex items-center justify-center font-bold">4</div>
             <div>
               <p className="font-medium text-white">Rotate Token</p>
               <p className="text-sm text-gray-400">Generate a new token after each successful submission to prevent replay attacks.</p>

@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { auth } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 import SessionForm from './SessionForm';
@@ -54,27 +53,19 @@ export default async function SessionPage() {
         <div className="space-y-3">
           <div className="flex justify-between items-center py-2 border-b border-gray-700">
             <span className="text-gray-400">Name</span>
-            <span className="font-medium">{session.user?.name || 'N/A'}</span>
+            <span className="font-medium">{String(session.user?.name || 'N/A')}</span>
           </div>
           <div className="flex justify-between items-center py-2 border-b border-gray-700">
             <span className="text-gray-400">UID</span>
-            <span className="font-medium">{session.user?.uid || 'N/A'}</span>
+            <span className="font-medium">{String(session.user?.uid || 'N/A')}</span>
           </div>
           <div className="flex justify-between items-center py-2 border-b border-gray-700">
             <span className="text-gray-400">Email</span>
-            <span className="font-medium">{session.user?.email || 'N/A'}</span>
+            <span className="font-medium">{String(session.user?.email || 'N/A')}</span>
           </div>
           <div className="flex justify-between items-center py-2 border-b border-gray-700">
             <span className="text-gray-400">Affiliation</span>
-            <span className="font-medium">{session.user?.eduPersonAffiliation || 'N/A'}</span>
-          </div>
-          <div className="flex justify-between items-center py-2 border-b border-gray-700">
-            <span className="text-gray-400">Cookie Expires</span>
-            <span className="font-medium">
-              {session.cookie?.expires
-                ? new Date(session.cookie.expires).toLocaleString()
-                : 'Session cookie (expires when browser closes)'}
-            </span>
+            <span className="font-medium">{String(session.user?.eduPersonAffiliation || 'N/A')}</span>
           </div>
           <div className="flex justify-between items-center py-2">
             <span className="text-gray-400">Session Active</span>

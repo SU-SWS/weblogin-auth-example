@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "./components/Header";
 
+// Force dynamic rendering since Header uses cookies for session
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Weblogin Auth SDK Example",
   description: "A complete example showcasing the Weblogin Auth SDK features",

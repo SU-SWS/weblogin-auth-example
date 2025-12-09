@@ -30,7 +30,11 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const returnTo = searchParams.get('returnTo') || '/session';
 
+  // Origin, or where this site is to redirect back to after login
+  // This is needed to build the full ACS URL in the SAML request
+  const origin = new URL(request.url).origin;
+
   // auth.login() creates a SAML AuthnRequest and returns a redirect response
   // to Stanford's IdP. The SDK handles all the SAML complexity internally.
-  return auth.login({ returnTo });
+  return auth.login({ returnTo, origin });
 }

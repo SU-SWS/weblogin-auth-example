@@ -1,7 +1,42 @@
+/**
+ * =============================================================================
+ * PROTECTED PAGE - app/protected/page.tsx
+ * =============================================================================
+ *
+ * A demonstration of route protection using middleware (proxy.ts).
+ * This page can only be accessed by authenticated users.
+ *
+ * PROTECTION LAYERS:
+ * This page is protected at TWO levels for defense-in-depth:
+ *
+ * 1. MIDDLEWARE (proxy.ts)
+ *    - Intercepts requests BEFORE they reach this page
+ *    - Redirects unauthenticated users to login
+ *    - Users never see this page without authentication
+ *
+ * 2. PAGE-LEVEL CHECK (this file)
+ *    - Secondary check as a fallback
+ *    - Handles edge cases where middleware might be bypassed
+ *    - Shows "Access Denied" if session is missing
+ *
+ * WHY BOTH?
+ * Defense-in-depth is a security best practice. If middleware fails or is
+ * misconfigured, the page-level check provides a safety net. It's also
+ * useful during development when middleware might not be running.
+ *
+ * CONTENT:
+ * - Shows authenticated user's session information
+ * - Displays code examples showing how protection works
+ * - Explains the security architecture
+ * =============================================================================
+ */
+
 import { auth } from '@/lib/auth';
 import { type Session } from 'weblogin-auth-sdk';
 import CodeBlock from '@/app/components/CodeBlock';
+import BackToHome from '@/app/components/BackToHome';
 
+// Code examples shown on the page (defined as constants for clarity)
 const proxyCode = `import { auth } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -56,6 +91,7 @@ export const auth = createWebLoginNext({
 });`;
 
 export default async function ProtectedPage() {
+  // Get the session - middleware already verified auth, but we double-check
   const session: Session | null = await auth.getSession();
 
   if (!session || !session.user || !session.user.name) {
@@ -78,6 +114,7 @@ export default async function ProtectedPage() {
 
   return (
     <main id="main-content">
+      <BackToHome />
       <div className="mb-8">
         <h1 className="text-4xl font-bold">Welcome, {userName}!</h1>
         <p className="text-gray-300 mt-2">You have successfully accessed the protected page.</p>

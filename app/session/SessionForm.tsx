@@ -1,19 +1,70 @@
+/**
+ * =============================================================================
+ * SESSION FORM COMPONENT - app/session/SessionForm.tsx
+ * =============================================================================
+ *
+ * A client component that allows users to add custom key-value pairs to their
+ * session. Demonstrates how to use auth.updateSession() with Server Actions.
+ *
+ * KEY CONCEPTS:
+ *
+ * 1. CLIENT COMPONENT
+ *    Uses 'use client' because it needs:
+ *    - useState for UI feedback (success animation, pending state)
+ *    - useTransition for non-blocking form submission
+ *
+ * 2. SERVER ACTIONS
+ *    The form calls updateSessionAction which is defined in the parent
+ *    server component. Server Actions allow client components to trigger
+ *    server-side code securely.
+ *
+ * 3. SESSION META
+ *    Sessions have a `meta` object where you can store custom data.
+ *    This is perfect for user preferences, feature flags, or app state
+ *    that should persist across requests.
+ *
+ * USAGE:
+ * ```tsx
+ * // In a server component
+ * async function updateSession(formData: FormData) {
+ *   'use server';
+ *   await auth.updateSession({ meta: { [key]: value } });
+ * }
+ *
+ * return <SessionForm meta={session.meta} updateSessionAction={updateSession} />;
+ * ```
+ *
+ * UI FEATURES:
+ * - Shows existing session meta data
+ * - Highlights newly added keys with animation
+ * - Loading state on button during submission
+ * - Success toast notification
+ * =============================================================================
+ */
+
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
 
 interface SessionFormProps {
-  meta: Record<string, unknown> | undefined;
-  updateSessionAction: (formData: FormData) => Promise<void>;
+  meta: Record<string, unknown> | undefined;  // Current session meta data
+  updateSessionAction: (formData: FormData) => Promise<void>;  // Server Action
 }
 
 export default function SessionForm({ meta, updateSessionAction }: SessionFormProps) {
+  // useTransition provides isPending state without blocking the UI
   const [isPending, startTransition] = useTransition();
+
+  // Track the most recently added key for highlight animation
   const [newKey, setNewKey] = useState<string | null>(null);
+
+  // Control success notification visibility
   const [showSuccess, setShowSuccess] = useState(false);
 
+  // Convert meta object to array for rendering
   const metaEntries = meta ? Object.entries(meta) : [];
 
+  // Clear the highlight effect after 2 seconds
   useEffect(() => {
     if (newKey) {
       const timer = setTimeout(() => setNewKey(null), 2000);
@@ -21,6 +72,7 @@ export default function SessionForm({ meta, updateSessionAction }: SessionFormPr
     }
   }, [newKey]);
 
+  // Hide success notification after 2 seconds
   useEffect(() => {
     if (showSuccess) {
       const timer = setTimeout(() => setShowSuccess(false), 2000);
@@ -28,10 +80,16 @@ export default function SessionForm({ meta, updateSessionAction }: SessionFormPr
     }
   }, [showSuccess]);
 
+  /**
+   * Handle form submission
+   * Uses startTransition to keep UI responsive during the server action
+   */
   const handleSubmit = async (formData: FormData) => {
     const key = formData.get('key') as string;
     startTransition(async () => {
+      // Call the server action passed from parent
       await updateSessionAction(formData);
+      // Trigger UI feedback
       setNewKey(key);
       setShowSuccess(true);
     });
@@ -39,7 +97,7 @@ export default function SessionForm({ meta, updateSessionAction }: SessionFormPr
 
   return (
     <>
-      {/* Custom Session Data Card */}
+      {/* Display current session meta data */}
       <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 mb-6">
         <h2 className="text-xl font-bold mb-4 text-green-400">Custom Session Data</h2>
         {metaEntries.length > 0 ? (
@@ -63,11 +121,11 @@ export default function SessionForm({ meta, updateSessionAction }: SessionFormPr
         )}
       </div>
 
-      {/* Add to Session Card */}
+      {/* Form to add new session data */}
       <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 mb-6 relative overflow-hidden">
         <h2 className="text-xl font-bold mb-4 text-yellow-400">Add Custom Session Data</h2>
 
-        {/* Success notification */}
+        {/* Success notification - slides in from right */}
         <div
           className={`absolute top-4 right-4 flex items-center gap-2 bg-green-900/90 text-green-300 px-4 py-2 rounded-lg transition-all duration-300 transform
             ${showSuccess ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}
@@ -78,6 +136,11 @@ export default function SessionForm({ meta, updateSessionAction }: SessionFormPr
           <span className="text-sm font-medium">Added successfully!</span>
         </div>
 
+        {/*
+          Form with Server Action
+          The action prop accepts the handleSubmit function which calls
+          the server action via startTransition
+        */}
         <form action={handleSubmit} className="flex flex-wrap gap-4 items-end">
           <div className="flex-1 min-w-[150px]">
             <label className="block text-sm font-medium text-gray-400 mb-2">Key</label>

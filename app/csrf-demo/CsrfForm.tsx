@@ -1,31 +1,76 @@
+/**
+ * =============================================================================
+ * CSRF FORM COMPONENT - app/csrf-demo/CsrfForm.tsx
+ * =============================================================================
+ *
+ * An interactive client component that demonstrates CSRF protection in action.
+ * Users can test both secure submission (with valid token) and simulated attacks
+ * (with invalid token) to see how the protection works.
+ *
+ * KEY CONCEPTS:
+ *
+ * 1. CLIENT COMPONENT
+ *    Uses 'use client' because it needs:
+ *    - useState for result messages and UI state
+ *    - useTransition for non-blocking server action calls
+ *    - useEffect for automatic token initialization
+ *
+ * 2. CSRF TOKEN FLOW
+ *    - Token is passed from server component via props
+ *    - Hidden input includes token in form submissions
+ *    - Server validates token before processing
+ *
+ * 3. TWO SUBMISSION MODES
+ *    - "Submit Securely": Uses the real CSRF token (should succeed)
+ *    - "Simulate Attack": Uses a fake token (should fail validation)
+ *
+ * UI FEATURES:
+ * - Shows/hides the current CSRF token
+ * - Visual feedback during submission (loading states)
+ * - Animated success/error messages
+ * - Displays last successful submission details
+ * =============================================================================
+ */
+
 'use client';
 
 import { useState, useTransition, useEffect } from 'react';
 
 interface CsrfFormProps {
-  csrfToken?: string;
-  submitSecureForm: (formData: FormData) => Promise<void>;
-  submitWithoutCsrf: (formData: FormData) => Promise<void>;
-  initializeCsrfToken: () => Promise<void>;
-  lastMessage?: string;
-  lastSubmission?: string;
+  csrfToken?: string;                                      // Current valid token
+  submitSecureForm: (formData: FormData) => Promise<void>; // Server Action with CSRF check
+  submitWithoutCsrf: (formData: FormData) => Promise<void>; // Unsafe action (demo only)
+  initializeCsrfToken: () => Promise<void>;                // Create token if missing
+  lastMessage?: string;                                    // Last successful message
+  lastSubmission?: string;                                 // Timestamp of last submission
 }
 
 export default function CsrfForm({
   csrfToken,
   submitSecureForm,
-  submitWithoutCsrf,
   initializeCsrfToken,
   lastMessage,
   lastSubmission
 }: CsrfFormProps) {
+  // useTransition provides isPending without blocking UI
   const [isPending, startTransition] = useTransition();
+
+  // Track submission result for feedback
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
+
+  // Toggle visibility of the CSRF token (hidden by default for security demo)
   const [showToken, setShowToken] = useState(false);
+
+  // Track which button was clicked for targeted loading states
   const [activeAction, setActiveAction] = useState<'secure' | 'attack' | null>(null);
+
+  // Control result message visibility and animation
   const [showResult, setShowResult] = useState(false);
 
-  // Initialize CSRF token if it doesn't exist
+  /**
+   * Auto-initialize CSRF token if it doesn't exist
+   * This runs once when the component mounts without a token
+   */
   useEffect(() => {
     if (!csrfToken) {
       startTransition(async () => {
@@ -34,16 +79,17 @@ export default function CsrfForm({
     }
   }, [csrfToken, initializeCsrfToken]);
 
-  // Animate result appearance
+  /**
+   * Auto-hide result message after 5 seconds
+   */
   useEffect(() => {
     if (result) {
-      setShowResult(true);
       const timer = setTimeout(() => setShowResult(false), 5000);
       return () => clearTimeout(timer);
     }
   }, [result]);
 
-  // Show loading state while initializing token
+  // Show loading state while token is being initialized
   if (!csrfToken) {
     return (
       <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 mb-6">
@@ -59,8 +105,13 @@ export default function CsrfForm({
     );
   }
 
+  /**
+   * Handle secure form submission
+   * Uses the valid CSRF token - should always succeed
+   */
   const handleSecureSubmit = async (formData: FormData) => {
     setResult(null);
+    setShowResult(false);
     setActiveAction('secure');
     startTransition(async () => {
       try {
@@ -69,31 +120,42 @@ export default function CsrfForm({
           success: true,
           message: 'Form submitted successfully! CSRF token validated and rotated.'
         });
+        setShowResult(true);
       } catch (error) {
         setResult({
           success: false,
           message: error instanceof Error ? error.message : 'An error occurred'
         });
+        setShowResult(true);
       }
       setActiveAction(null);
     });
   };
 
+  /**
+   * Simulate a CSRF attack
+   * Manually creates form data with an invalid token - should always fail
+   */
   const handleTamperedSubmit = async () => {
     setResult(null);
     setActiveAction('attack');
+
+    // Create form data with a FAKE token (simulating what an attacker would do)
     const formData = new FormData();
-    formData.set('_csrf', 'tampered-invalid-token');
+    formData.set('_csrf', 'tampered-invalid-token');  // This won't match!
     formData.set('message', 'Malicious message from attacker!');
 
     startTransition(async () => {
       try {
+        // This should fail validation because the token is fake
         await submitSecureForm(formData);
         setResult({
           success: true,
-          message: 'Form submitted successfully!'
+          message: 'Form submitted successfully!'  // This shouldn't happen
         });
       } catch (error) {
+        console.log('CSRF validation error (expected):', error);
+        // Expected: CSRF validation fails
         setResult({
           success: false,
           message: 'CSRF validation failed! The tampered token was rejected.'
@@ -107,7 +169,7 @@ export default function CsrfForm({
     <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 mb-6">
       <h2 className="text-xl font-bold mb-4 text-green-400">Interactive Demo</h2>
 
-      {/* Current Token Display */}
+      {/* Token Display - Shows the current CSRF token (hidden by default) */}
       <div className={`mb-6 p-4 bg-gray-900 rounded-lg border transition-all duration-500 ${
         activeAction === 'secure' ? 'border-green-500 shadow-lg shadow-green-500/20' :
         activeAction === 'attack' ? 'border-red-500 shadow-lg shadow-red-500/20 animate-pulse' :
@@ -131,7 +193,7 @@ export default function CsrfForm({
         </code>
       </div>
 
-      {/* Result Message */}
+      {/* Result Message - Shows success/error after submission */}
       <div className={`mb-6 overflow-hidden transition-all duration-500 ease-out ${
         result && showResult ? 'max-h-32 opacity-100' : 'max-h-0 opacity-0'
       }`}>
@@ -163,8 +225,15 @@ export default function CsrfForm({
         <p className="text-sm text-gray-400 mb-4">
           Enter a message and try both buttons to see how CSRF protection works.
         </p>
+
+        {/*
+          Form with hidden CSRF token
+          The token is included as a hidden field - the server validates it
+        */}
         <form action={handleSecureSubmit} className="space-y-4">
+          {/* HIDDEN CSRF TOKEN - Critical for protection! */}
           <input type="hidden" name="_csrf" value={csrfToken} />
+
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-2">Message</label>
             <input
@@ -180,8 +249,9 @@ export default function CsrfForm({
               placeholder="Enter a message to submit"
             />
           </div>
+
           <div className="flex flex-wrap gap-3">
-            {/* Secure Submit Button */}
+            {/* SECURE SUBMIT - Uses valid token */}
             <button
               type="submit"
               disabled={isPending}
@@ -209,7 +279,7 @@ export default function CsrfForm({
               )}
             </button>
 
-            {/* Attack Button */}
+            {/* ATTACK SIMULATION - Uses fake token */}
             <button
               type="button"
               onClick={handleTamperedSubmit}
@@ -238,13 +308,14 @@ export default function CsrfForm({
               )}
             </button>
           </div>
+
           <p className="text-xs text-gray-500 mt-2">
             <span className="text-green-400">Submit Securely</span> uses the valid CSRF token. <span className="text-red-400">Simulate Attack</span> uses a tampered token.
           </p>
         </form>
       </div>
 
-      {/* Last Submission Info */}
+      {/* Last Successful Submission Display */}
       {lastMessage && (
         <div className="p-4 bg-gray-900 rounded-lg border border-gray-700 animate-fadeIn">
           <h3 className="text-sm font-medium text-gray-400 mb-2">Last Successful Submission:</h3>

@@ -1,11 +1,45 @@
+/**
+ * =============================================================================
+ * HOME PAGE - app/page.tsx
+ * =============================================================================
+ *
+ * The main landing page of the Weblogin Auth SDK demo application. This page
+ * showcases the various features of the SDK through interactive cards.
+ *
+ * KEY FEATURES DEMONSTRATED:
+ * 1. Reading session state in a server component
+ * 2. Conditional rendering based on auth state
+ * 3. Navigation to protected and public routes
+ *
+ * SERVER COMPONENT:
+ * This is an async server component (no 'use client' directive).
+ * It can directly call auth.getSession() without any client-side hooks.
+ * The session check runs on the server during each request.
+ *
+ * CONDITIONAL UI:
+ * - Logged out: Shows "Secure Authentication" heading and GitHub link
+ * - Logged in: Shows "Ready to Build" heading (GitHub link hidden)
+ *
+ * ACCESSIBILITY:
+ * - Main content has id="main-content" for skip link target
+ * - Cards use <article> elements with proper headings
+ * - Links have aria-labels for screen readers
+ * - External links indicate they open in new tabs
+ * =============================================================================
+ */
+
 import Link from 'next/link';
 import { auth } from '@/lib/auth';
 
 export default async function Home() {
+  // Check if user is logged in by reading session from cookie
+  // Returns Session object if authenticated, null otherwise
   const session = await auth.getSession();
 
   return (
+    // Main content area - id matches skip link target in Header
     <main id="main-content">
+      {/* Hero Section - different messaging based on auth state */}
       <div className="text-center mb-16">
         <h1 className="text-5xl font-bold mb-6">
           {session ? 'Ready to Build' : 'Secure Authentication'}
@@ -15,6 +49,8 @@ export default async function Home() {
             ? 'Explore the features below to see how the SDK handles session management, route protection, and API security.'
             : 'A complete example showcasing the Weblogin Auth SDK features. Log in to access protected resources and view session details.'}
         </p>
+
+        {/* Show GitHub button only when not logged in */}
         {!session && (
           <div className="mt-8">
             <a
@@ -29,8 +65,12 @@ export default async function Home() {
         )}
       </div>
 
+      {/* Feature Cards Grid */}
       <section aria-label="Features" className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Card 1: Protected Page */}
+        {/*
+          CARD 1: Protected Page Demo
+          Shows how middleware (proxy.ts) protects routes
+        */}
         <article className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex flex-col">
           <h2 className="text-xl font-bold mb-3 text-blue-400">Protected Page</h2>
           <p className="text-gray-300 mb-6 grow">
@@ -45,7 +85,10 @@ export default async function Home() {
           </Link>
         </article>
 
-        {/* Card 2: Session Info */}
+        {/*
+          CARD 2: Session Info Demo
+          Shows how to read and modify session data
+        */}
         <article className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex flex-col">
           <h2 className="text-xl font-bold mb-3 text-purple-400">Session Info</h2>
           <p className="text-gray-300 mb-6 grow">
@@ -60,7 +103,10 @@ export default async function Home() {
           </Link>
         </article>
 
-        {/* Card 3: Protected API */}
+        {/*
+          CARD 3: Protected API Demo
+          Shows how to secure API routes
+        */}
         <article className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex flex-col">
           <h2 className="text-xl font-bold mb-3 text-green-400">Protected API</h2>
           <p className="text-gray-300 mb-6 grow">
@@ -75,7 +121,10 @@ export default async function Home() {
           </Link>
         </article>
 
-        {/* Card 4: Metadata */}
+        {/*
+          CARD 4: SAML Metadata
+          Shows the SP metadata XML needed for IdP registration
+        */}
         <article className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex flex-col">
           <h2 className="text-xl font-bold mb-3 text-yellow-400">SAML Metadata</h2>
           <p className="text-gray-300 mb-6 grow">
@@ -92,7 +141,10 @@ export default async function Home() {
           </a>
         </article>
 
-        {/* Card 5: CSRF Protection */}
+        {/*
+          CARD 5: CSRF Protection Demo
+          Shows how to protect forms from CSRF attacks
+        */}
         <article className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex flex-col">
           <h2 className="text-xl font-bold mb-3 text-red-400">CSRF Protection</h2>
           <p className="text-gray-300 mb-6 grow">
@@ -107,7 +159,10 @@ export default async function Home() {
           </Link>
         </article>
 
-        {/* Card 6: GitHub Repository */}
+        {/*
+          CARD 6: GitHub Repository Link
+          Links to the SDK source code
+        */}
         <article className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex flex-col">
           <h2 className="text-xl font-bold mb-3 text-gray-300">GitHub Repository</h2>
           <p className="text-gray-300 mb-6 grow">

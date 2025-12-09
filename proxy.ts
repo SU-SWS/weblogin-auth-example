@@ -1,5 +1,9 @@
 import { auth } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
+import dotenv from 'dotenv';
+
+// Load .env file for edge function bundling
+dotenv.config();
 
 export async function proxy(request: NextRequest) {
   // Protect /protected routes

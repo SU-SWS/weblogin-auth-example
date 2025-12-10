@@ -33,6 +33,7 @@
 
 import { createWebLoginNext } from 'weblogin-auth-sdk/next';
 import { idps } from 'weblogin-auth-sdk';
+import 'server-only';
 
 // Lazy initialization to avoid config validation during edge function bundling
 let _auth: ReturnType<typeof createWebLoginNext> | null = null;

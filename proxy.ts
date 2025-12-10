@@ -28,10 +28,6 @@
 
 import { auth } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
-import dotenv from 'dotenv';
-
-// Load environment variables from .env file (needed for Netlify Edge Functions)
-dotenv.config();
 
 /**
  * Middleware function that runs on every matching request.

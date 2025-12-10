@@ -19,15 +19,37 @@
  * - Better performance than checking auth in every page component
  *
  * DEPLOYMENT NOTE:
- * On Netlify, this runs as an Edge Function. The dotenv.config() call ensures
- * environment variables are loaded from .env files (created by vault plugin).
+ * On Netlify, this runs as an Edge Function. The session secret is inlined
+ * at build time when the vault plugin has loaded environment variables.
  *
  * @see https://nextjs.org/docs/app/building-your-application/routing/middleware
+ * @see https://github.com/SU-SWS/weblogin-auth-sdk/blob/main/docs/edge-functions.md
  * =============================================================================
  */
 
-import { getEdgeSessionReader } from '@/lib/edge-session';
+import { createEdgeSessionReader } from 'weblogin-auth-sdk/edge-session';
 import { NextRequest, NextResponse } from 'next/server';
+
+/**
+ * Session secret inlined at build time.
+ *
+ * IMPORTANT: This value is read from process.env during the Next.js build
+ * (after the vault plugin has loaded secrets) and baked into the edge function
+ * bundle. This is safe because:
+ * 1. Edge function bundles are server-side only (never sent to client)
+ * 2. The secret is needed at runtime but env vars aren't available in edge
+ * 3. The vault plugin loads secrets during onPreBuild, before Next.js builds
+ */
+const SESSION_SECRET = process.env.WEBLOGIN_AUTH_SESSION_SECRET!;
+
+/**
+ * Pre-configured edge session reader.
+ * Created at module load time with the build-time inlined secret.
+ */
+const sessionReader = createEdgeSessionReader(
+  SESSION_SECRET,
+  'weblogin-auth' // cookie name
+);
 
 /**
  * Middleware function that runs on every matching request.
@@ -47,10 +69,6 @@ export async function proxy(request: NextRequest) {
   // Check if the request is for a protected route
   if (request.nextUrl.pathname.startsWith('/protected')) {
     try {
-      console.log('Checking authentication for protected route:', request.nextUrl.pathname);
-      // Get the edge session reader (lazily instantiated at runtime)
-      const sessionReader = getEdgeSessionReader();
-
       // Check if the user has a valid session
       const isAuthenticated = await sessionReader.isAuthenticated(request);
 

@@ -26,6 +26,29 @@ import {
 let cachedReader: EdgeSessionReader | null = null;
 
 /**
+ * Get the session secret from the environment.
+ * Supports both Node.js (process.env) and Netlify Edge (Netlify.env).
+ */
+function getSessionSecret(): string {
+  // Try Netlify Edge environment first (runtime)
+  // @ts-expect-error - Netlify global is available in Netlify Edge Functions
+  if (typeof Netlify !== 'undefined' && Netlify.env) {
+    // @ts-expect-error - Netlify global is available in Netlify Edge Functions
+    const secret = Netlify.env.get('WEBLOGIN_AUTH_SESSION_SECRET');
+    if (secret) return secret;
+  }
+
+  // Fall back to process.env (Node.js / local dev)
+  if (process.env.WEBLOGIN_AUTH_SESSION_SECRET) {
+    return process.env.WEBLOGIN_AUTH_SESSION_SECRET;
+  }
+
+  throw new Error(
+    'Session secret is required. Set WEBLOGIN_AUTH_SESSION_SECRET environment variable.'
+  );
+}
+
+/**
  * Get the edge session reader instance.
  *
  * This function lazily creates the reader on first call to avoid
@@ -44,7 +67,7 @@ let cachedReader: EdgeSessionReader | null = null;
 export function getEdgeSessionReader(): EdgeSessionReader {
   if (!cachedReader) {
     cachedReader = createEdgeSessionReader(
-      process.env.WEBLOGIN_AUTH_SESSION_SECRET!,
+      getSessionSecret(),
       'weblogin-auth' // cookie name
     );
   }

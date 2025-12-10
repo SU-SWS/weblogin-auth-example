@@ -26,7 +26,7 @@
  * =============================================================================
  */
 
-import { edgeSessionReader } from '@/lib/edge-session';
+import { getEdgeSessionReader } from '@/lib/edge-session';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -47,8 +47,11 @@ export async function proxy(request: NextRequest) {
   // Check if the request is for a protected route
   if (request.nextUrl.pathname.startsWith('/protected')) {
     try {
+      // Get the edge session reader (lazily instantiated at runtime)
+      const sessionReader = getEdgeSessionReader();
+
       // Check if the user has a valid session
-      const isAuthenticated = await edgeSessionReader.isAuthenticated(request);
+      const isAuthenticated = await sessionReader.isAuthenticated(request);
 
       // No valid session means user is not authenticated
       if (!isAuthenticated) {

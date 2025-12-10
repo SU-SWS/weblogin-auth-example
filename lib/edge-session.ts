@@ -17,24 +17,36 @@
  */
 
 import 'server-only';
-import { createEdgeSessionReader } from 'weblogin-auth-sdk/edge-session';
+import {
+  createEdgeSessionReader,
+  type EdgeSessionReader,
+} from 'weblogin-auth-sdk/edge-session';
+
+// Cached instance to avoid recreating on every call
+let cachedReader: EdgeSessionReader | null = null;
 
 /**
- * Pre-configured edge session reader instance.
+ * Get the edge session reader instance.
  *
- * This reader is configured with the session secret from environment variables
- * and can be used to validate sessions in edge functions and middleware.
+ * This function lazily creates the reader on first call to avoid
+ * issues with environment variables not being available at build time.
  *
  * USAGE:
  * ```ts
- * import { edgeSessionReader } from '@/lib/edge-session';
+ * import { getEdgeSessionReader } from '@/lib/edge-session';
  *
- * const isAuthenticated = await edgeSessionReader.isAuthenticated(request);
- * const user = await edgeSessionReader.getUser(request);
- * const userId = await edgeSessionReader.getUserId(request);
+ * const sessionReader = getEdgeSessionReader();
+ * const isAuthenticated = await sessionReader.isAuthenticated(request);
+ * const user = await sessionReader.getUser(request);
+ * const userId = await sessionReader.getUserId(request);
  * ```
  */
-export const edgeSessionReader = createEdgeSessionReader(
-  process.env.WEBLOGIN_AUTH_SESSION_SECRET!,
-  'weblogin-auth' // cookie name
-);
+export function getEdgeSessionReader(): EdgeSessionReader {
+  if (!cachedReader) {
+    cachedReader = createEdgeSessionReader(
+      process.env.WEBLOGIN_AUTH_SESSION_SECRET!,
+      'weblogin-auth' // cookie name
+    );
+  }
+  return cachedReader;
+}

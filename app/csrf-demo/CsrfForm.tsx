@@ -138,6 +138,7 @@ export default function CsrfForm({
    */
   const handleTamperedSubmit = async () => {
     setResult(null);
+    setShowResult(false);
     setActiveAction('attack');
 
     // Create form data with a FAKE token (simulating what an attacker would do)
@@ -153,6 +154,7 @@ export default function CsrfForm({
           success: true,
           message: 'Form submitted successfully!'  // This shouldn't happen
         });
+        setShowResult(true);
       } catch (error) {
         console.log('CSRF validation error (expected):', error);
         // Expected: CSRF validation fails
@@ -160,6 +162,7 @@ export default function CsrfForm({
           success: false,
           message: 'CSRF validation failed! The tampered token was rejected.'
         });
+        setShowResult(true);
       }
       setActiveAction(null);
     });

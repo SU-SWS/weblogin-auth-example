@@ -37,14 +37,27 @@ import CodeBlock from '@/app/components/CodeBlock';
 import BackToHome from '@/app/components/BackToHome';
 
 // Code examples shown on the page (defined as constants for clarity)
-const proxyCode = `import { auth } from '@/lib/auth';
+const proxyCode = `import { createEdgeSessionReader } from 'weblogin-auth-sdk/edge-session';
 import { NextRequest, NextResponse } from 'next/server';
+
+// Create edge-compatible session reader with build-time inlined secret
+const sessionReader = createEdgeSessionReader(
+  process.env.WEBLOGIN_AUTH_SESSION_SECRET!,
+  'weblogin-auth' // cookie name
+);
 
 export async function proxy(request: NextRequest) {
   // Protect /protected routes
   if (request.nextUrl.pathname.startsWith('/protected')) {
-    const session = await auth.getSession(request);
-    if (!session) {
+    try {
+      const isAuthenticated = await sessionReader.isAuthenticated(request);
+      if (!isAuthenticated) {
+        const loginUrl = new URL('/api/auth/login', request.url);
+        loginUrl.searchParams.set('returnTo', request.nextUrl.pathname);
+        return NextResponse.redirect(loginUrl);
+      }
+    } catch (err) {
+      console.error('Unauthorized User in Middleware', err);
       const loginUrl = new URL('/api/auth/login', request.url);
       loginUrl.searchParams.set('returnTo', request.nextUrl.pathname);
       return NextResponse.redirect(loginUrl);
@@ -164,10 +177,11 @@ export default async function ProtectedPage() {
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
-                1. Middleware Protection
+                1. Edge Middleware Protection
               </h3>
               <p className="text-sm text-gray-400 mt-1">
-                Intercepts requests to /protected routes and redirects unauthenticated users to login.
+                Uses the edge-compatible <code className="bg-gray-800 px-1 rounded">EdgeSessionReader</code> to validate sessions in Netlify Edge Functions.
+                The session secret is inlined at build time from environment variables.
               </p>
             </div>
             <CodeBlock code={proxyCode} filename="proxy.ts" />
@@ -216,6 +230,10 @@ export default async function ProtectedPage() {
             Key Security Points
           </h3>
           <ul className="space-y-2 text-gray-300">
+            <li className="flex items-start gap-2">
+              <span className="text-green-400 mt-1">✓</span>
+              <span><strong>Edge Compatible:</strong> Uses <code className="bg-gray-800 px-1 rounded">EdgeSessionReader</code> which works in edge runtimes without Node.js APIs.</span>
+            </li>
             <li className="flex items-start gap-2">
               <span className="text-green-400 mt-1">✓</span>
               <span><strong>Defense in Depth:</strong> Both middleware and page-level checks ensure protection even if one layer fails.</span>

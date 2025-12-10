@@ -26,11 +26,15 @@
  * =============================================================================
  */
 
-import { auth } from '@/lib/auth';
+import { edgeSessionReader } from '@/lib/edge-session';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * Middleware function that runs on every matching request.
+ *
+ * Uses the edge-compatible EdgeSessionReader for session validation.
+ * This is lightweight and works in edge function environments where
+ * Node.js APIs are not available.
  *
  * @param request - The incoming Next.js request object
  * @returns NextResponse - Either a redirect to login or continuation to the page
@@ -42,19 +46,26 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function proxy(request: NextRequest) {
   // Check if the request is for a protected route
   if (request.nextUrl.pathname.startsWith('/protected')) {
-    // Attempt to get the user's session from their cookie
-    // The session is encrypted - the SDK handles decryption automatically
-    const session = await auth.getSession(request);
+    try {
+      // Check if the user has a valid session
+      const isAuthenticated = await edgeSessionReader.isAuthenticated(request);
 
-    // No session means user is not authenticated
-    if (!session) {
-      // Build the login URL with a returnTo parameter
-      // This ensures users come back to their original destination after login
+      // No valid session means user is not authenticated
+      if (!isAuthenticated) {
+        // Build the login URL with a returnTo parameter
+        // This ensures users come back to their original destination after login
+        const loginUrl = new URL('/api/auth/login', request.url);
+        loginUrl.searchParams.set('returnTo', request.nextUrl.pathname);
+
+        // Redirect to the login endpoint
+        // The SDK will then redirect to Stanford's IdP for authentication
+        return NextResponse.redirect(loginUrl);
+      }
+    } catch (err) {
+      console.error('Unauthorized User in Middleware', err);
+      // On error, redirect to login
       const loginUrl = new URL('/api/auth/login', request.url);
       loginUrl.searchParams.set('returnTo', request.nextUrl.pathname);
-
-      // Redirect to the login endpoint
-      // The SDK will then redirect to Stanford's IdP for authentication
       return NextResponse.redirect(loginUrl);
     }
   }

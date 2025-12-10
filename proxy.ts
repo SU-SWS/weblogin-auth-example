@@ -30,15 +30,6 @@
 import { createEdgeSessionReader } from 'weblogin-auth-sdk/edge-session';
 import { NextRequest, NextResponse } from 'next/server';
 
-// Load environment variables from .env file at BUILD TIME only.
-// This is needed because the vault plugin writes secrets to .env during the build.
-// We check for EdgeRuntime to avoid running dotenv in the edge environment.
-// @ts-expect-error - EdgeRuntime is a global in edge environments
-if (typeof EdgeRuntime === 'undefined') {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  require('dotenv').config();
-}
-
 /**
  * Session secret inlined at build time.
  *
@@ -56,7 +47,7 @@ const SESSION_SECRET = process.env.WEBLOGIN_AUTH_SESSION_SECRET!;
  * Created at module load time with the build-time inlined secret.
  */
 const sessionReader = createEdgeSessionReader(
-  SESSION_SECRET,
+  process.env.WEBLOGIN_AUTH_SESSION_SECRET!,
   'weblogin-auth' // cookie name
 );
 

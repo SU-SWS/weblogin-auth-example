@@ -31,18 +31,6 @@ import { createEdgeSessionReader } from 'weblogin-auth-sdk/edge-session';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
- * Session secret inlined at build time.
- *
- * IMPORTANT: This value is read from process.env during the Next.js build
- * (after the vault plugin has loaded secrets) and baked into the edge function
- * bundle. This is safe because:
- * 1. Edge function bundles are server-side only (never sent to client)
- * 2. The secret is needed at runtime but env vars aren't available in edge
- * 3. The vault plugin loads secrets during onPreBuild, before Next.js builds
- */
-const SESSION_SECRET = process.env.WEBLOGIN_AUTH_SESSION_SECRET!;
-
-/**
  * Pre-configured edge session reader.
  * Created at module load time with the build-time inlined secret.
  */

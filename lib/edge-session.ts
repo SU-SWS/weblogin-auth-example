@@ -16,7 +16,6 @@
  * =============================================================================
  */
 
-import 'server-only';
 import {
   createEdgeSessionReader,
   type EdgeSessionReader,

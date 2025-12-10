@@ -47,6 +47,7 @@ export async function proxy(request: NextRequest) {
   // Check if the request is for a protected route
   if (request.nextUrl.pathname.startsWith('/protected')) {
     try {
+      console.log('Checking authentication for protected route:', request.nextUrl.pathname);
       // Get the edge session reader (lazily instantiated at runtime)
       const sessionReader = getEdgeSessionReader();
 

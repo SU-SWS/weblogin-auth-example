@@ -34,13 +34,13 @@ function getSessionSecret(): string {
   if (typeof Netlify !== 'undefined' && Netlify.env) {
     // @ts-expect-error - Netlify global is available in Netlify Edge Functions
     const secret = Netlify.env.get('WEBLOGIN_AUTH_SESSION_SECRET');
-    console.log('Using Netlify Edge session secret', secret.slice(0, 4) + '...');
+    console.log('Using Netlify Edge session secret', secret?.slice(0, 4) + '...');
     if (secret) return secret;
   }
 
   // Fall back to process.env (Node.js / local dev)
   if (process.env.WEBLOGIN_AUTH_SESSION_SECRET) {
-    console.log('Using process.env session secret', process.env.WEBLOGIN_AUTH_SESSION_SECRET.slice(0, 4) + '...');
+    console.log('Using process.env session secret', process.env.WEBLOGIN_AUTH_SESSION_SECRET?.slice(0, 4) + '...');
     return process.env.WEBLOGIN_AUTH_SESSION_SECRET;
   }
 

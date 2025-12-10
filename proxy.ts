@@ -29,6 +29,12 @@
 
 import { createEdgeSessionReader } from 'weblogin-auth-sdk/edge-session';
 import { NextRequest, NextResponse } from 'next/server';
+import dotenv from 'dotenv';
+
+// Load environment variables from .env file at BUILD TIME
+// This is needed because the vault plugin writes secrets to .env during the build.
+// Turbopack will inline these values when bundling server code.
+dotenv.config();
 
 /**
  * Session secret inlined at build time.

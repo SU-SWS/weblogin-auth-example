@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "certs": "node ./scripts/generate-certs.js",
+    "generate-certs": "node ./scripts/generate-certs.js",
     "vault": "netlify-plugin-vault-variables",
     "vault:local": "NODE_ENV=development netlify-plugin-vault-variables"
   },

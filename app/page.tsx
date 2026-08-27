@@ -54,7 +54,7 @@ export default async function Home() {
         {!session && (
           <div className="mt-8">
             <a
-              href="https://github.com/SU-SWS/weblogin-auth-sdk/tree/v3"
+              href="https://github.com/SU-SWS/weblogin-auth-sdk/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block bg-white text-gray-900 px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"

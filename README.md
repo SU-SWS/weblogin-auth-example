@@ -32,9 +32,9 @@ This example demonstrates:
 
 ### Prerequisites
 
-- Node.js 20.9+ (this repo uses Node 24, see `.nvmrc`)
+- Node.js 22.13+, required by `weblogin-auth-sdk` 4 (this repo uses Node 24, see `.nvmrc`)
 - A registered SAML Service Provider in [SPDB](https://spdb.stanford.edu)
-- A signing key pair (required) and an encryption key pair (optional from `weblogin-auth-sdk` 4.1.0, [#106](https://github.com/SU-SWS/weblogin-auth-sdk/pull/106); earlier versions require it). `npm run certs` generates one pair used for both.
+- A signing key pair (required) and an encryption key pair (optional). `npm run certs` generates one pair used for both.
 
 ### Installation
 

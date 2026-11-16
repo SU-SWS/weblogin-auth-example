@@ -7,14 +7,14 @@ Code samples are simplified from working files in this repository, linked after 
 ## Prerequisites
 
 - A Next.js 16 application using the App Router
-- Node.js 20.9 or later (this repo uses Node 24, see `.nvmrc`)
+- Node.js 22.13 or later, required by `weblogin-auth-sdk` 4 (this repo uses Node 24, see `.nvmrc`)
 - Access to register a Service Provider (SP) in [SPDB](https://spdb.stanford.edu)
 - `openssl` for generating certificates
 
 ## Step 1: Install the SDK
 
 ```bash
-npm install weblogin-auth-sdk@^3
+npm install weblogin-auth-sdk@^4.1.1
 ```
 
 ## Step 2: Choose your Entity ID and origins
@@ -31,7 +31,7 @@ Local development and deploy previews can share the production Entity ID. The SD
 | Signing (`privateKey`, `cert`) | **Required** | Signing AuthnRequests and metadata |
 | Encryption (`decryptionPvk`, `decryptionCert`) | Optional (see note) | Letting the IdP encrypt assertions to you |
 
-> **Note:** encryption is optional from `weblogin-auth-sdk` 4.1.0 ([SU-SWS/weblogin-auth-sdk#106](https://github.com/SU-SWS/weblogin-auth-sdk/pull/106)). Earlier versions require the encryption pair as well. If you use encryption, always set both the key and the certificate.
+> **Note:** if you use encryption, always set both the key and the certificate. The SDK rejects a config with only one of them. (Encryption is optional from `weblogin-auth-sdk` 4.1.0; 3.x requires it.)
 
 Generate a self-signed certificate valid for 10 years:
 
@@ -256,7 +256,7 @@ SAML requires HTTPS.
 
 1. Generate metadata **for your production URL**. Don't download it from localhost: the ACS URL inside it would point at `https://localhost:3000` and production logins would go there.
    - Deploy the site, then download `https://your-app.stanford.edu/api/auth/metadata`.
-   - **Known issue:** with `signMetadata: true`, `weblogin-auth-sdk` 4.1.0 and earlier produce metadata whose signature is invalid. Fixed by [SU-SWS/weblogin-auth-sdk#104](https://github.com/SU-SWS/weblogin-auth-sdk/pull/104): upgrade to the first release that includes it before submitting signed metadata.
+   - Use `weblogin-auth-sdk` 4.1.1 or later. Earlier versions produce signed metadata whose signature is invalid ([SU-SWS/weblogin-auth-sdk#104](https://github.com/SU-SWS/weblogin-auth-sdk/pull/104)).
 2. Create a new SP configuration in [SPDB](https://spdb.stanford.edu), using your Entity ID and the metadata file.
 3. Request the attributes your app needs (for example `uid`, `displayName`, `mail`, `eduPersonAffiliation`).
 4. Wait for the IdP to pick up the configuration before testing.
@@ -265,7 +265,7 @@ SAML requires HTTPS.
 
 ### Renew metadata every year
 
-Generated metadata includes a `validUntil` date one year out. **When it passes, SPDB disables your SP configuration and logins stop working.**
+Generated metadata includes a `validUntil` date, one year out by default (set `metadataValidityDays` in the SAML config to change it). **When it passes, SPDB disables your SP configuration and logins stop working.**
 
 - Put a reminder in your calendar a few weeks before the date in your submitted metadata.
 - To renew: regenerate metadata (Step 9) and update it on your SP configuration in SPDB.

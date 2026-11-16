@@ -256,6 +256,7 @@ SAML requires HTTPS.
 
 1. Generate metadata **for your production URL**. Don't download it from localhost: the ACS URL inside it would point at `https://localhost:3000` and production logins would go there.
    - Deploy the site, then download `https://your-app.stanford.edu/api/auth/metadata`.
+   - Or generate it offline: copy [scripts/generate-metadata.mjs](scripts/generate-metadata.mjs) and [lib/saml-config.ts](lib/saml-config.ts) from this repo, then run `npm run metadata -- --origin https://your-app.stanford.edu`. It refuses localhost origins and checks the signature before writing.
    - **Known issue:** with `signMetadata: true`, `weblogin-auth-sdk` 3.0.5 and earlier produce metadata whose signature is invalid. Fixed by [SU-SWS/weblogin-auth-sdk#104](https://github.com/SU-SWS/weblogin-auth-sdk/pull/104). Upgrade once it's released before submitting signed metadata.
 2. Create a new SP configuration in [SPDB](https://spdb.stanford.edu), using your Entity ID and the metadata file.
 3. Request the attributes your app needs (for example `uid`, `displayName`, `mail`, `eduPersonAffiliation`).

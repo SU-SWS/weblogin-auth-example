@@ -83,6 +83,20 @@ To run this example locally:
 
 6. Open [https://localhost:3000](https://localhost:3000) in your browser. The dev server runs over HTTPS because SAML requires it.
 
+## Registering and Renewing in SPDB
+
+Generate metadata for SPDB from the app's real SAML config and your current keys:
+
+```bash
+npm run metadata -- --origin https://your-app.stanford.edu
+```
+
+- Writes `sp-metadata.xml` and prints the Entity ID, ACS URL, `validUntil` and certificate expiry dates.
+- Refuses localhost origins, and refuses to write metadata whose signature doesn't verify.
+- Run it again before `validUntil` (one year out) and upload the new file to SPDB. SPDB disables the SP configuration once `validUntil` passes.
+
+> Signed metadata needs a `weblogin-auth-sdk` release that includes [SU-SWS/weblogin-auth-sdk#104](https://github.com/SU-SWS/weblogin-auth-sdk/pull/104). Until then the script stops with an explanation instead of writing a broken file.
+
 ## Project Structure
 
 ```
@@ -97,7 +111,9 @@ To run this example locally:
 │   ├── page.tsx           # Home page
 │   └── not-found.tsx      # Custom 404 page
 ├── lib/
-│   └── auth.ts            # Auth SDK configuration
+│   ├── auth.ts            # Auth SDK configuration
+│   └── saml-config.ts     # SAML settings, shared with npm run metadata
+├── scripts/               # npm run certs, npm run metadata
 ├── proxy.ts               # Middleware for route protection
 └── certificates/          # Generated SSL certificates
 ```

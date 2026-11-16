@@ -68,6 +68,24 @@ export default async function Home() {
       {/* Feature Cards Grid */}
       <section aria-label="Features" className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/*
+          CARD 0: Implementation Guide
+          Step-by-step setup through SPDB registration and yearly renewal
+        */}
+        <article className="bg-gray-800 p-6 rounded-xl border border-emerald-700 flex flex-col md:col-span-2">
+          <h2 className="text-xl font-bold mb-3 text-emerald-400">Implementation Guide</h2>
+          <p className="text-gray-300 mb-6 grow">
+            Add WebLogin to your own Next.js app: keys, configuration, routes, route protection, SPDB registration, and
+            keeping it running after launch. Code samples come straight from this site&apos;s source.
+          </p>
+          <Link
+            href="/guide"
+            className="block w-full text-center bg-emerald-700 hover:bg-emerald-600 text-white py-2 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-gray-800"
+          >
+            Read the Guide
+          </Link>
+        </article>
+
+        {/*
           CARD 1: Protected Page Demo
           Shows how middleware (proxy.ts) protects routes
         */}

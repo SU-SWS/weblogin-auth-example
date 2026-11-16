@@ -18,6 +18,7 @@ This example demonstrates:
 | Page | Description |
 |------|-------------|
 | `/` | Home page with feature overview |
+| `/guide` | Step-by-step implementation guide, with code read from this repo |
 | `/protected` | Protected page demonstrating route protection with code examples |
 | `/session` | Session inspector with ability to add custom attributes |
 | `/csrf-demo` | Interactive CSRF protection demonstration |
@@ -38,7 +39,7 @@ This example demonstrates:
 
 ### Installation
 
-For detailed step-by-step instructions on integrating the Weblogin Auth SDK into your own Next.js application, see the **[Installation Guide](installation.md)**.
+For step-by-step instructions on integrating the Weblogin Auth SDK into your own Next.js application, see the **[Implementation Guide](https://weblogin-auth-example.netlify.app/guide)** (also at `/guide` when running locally, with a checklist in [installation.md](installation.md)).
 
 To run this example locally:
 
@@ -153,7 +154,7 @@ const isValid = AuthUtils.validateCSRFToken(submitted, expected);
 
 ## Related Resources
 
-- [Installation Guide](installation.md) - Step-by-step SDK integration instructions
+- [Implementation Guide](https://weblogin-auth-example.netlify.app/guide) - Step-by-step SDK integration instructions ([checklist](installation.md))
 - [Weblogin Auth SDK Documentation](https://github.com/SU-SWS/weblogin-auth-sdk)
 - [Stanford WebLogin](https://uit.stanford.edu/service/webauth)
 - [Next.js Documentation](https://nextjs.org/docs)

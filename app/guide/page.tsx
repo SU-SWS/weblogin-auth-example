@@ -254,9 +254,9 @@ export default function GuidePage() {
         </div>
         <Callout title="SDK version note">
           <p>
-            <Code>weblogin-auth-sdk</Code> 3.0.5 and earlier also require the encryption pair. It becomes optional once{' '}
-            <ExternalLink href="https://github.com/SU-SWS/weblogin-auth-sdk/pull/106">weblogin-auth-sdk#106</ExternalLink>{' '}
-            is released.
+            Encryption is optional from <Code>weblogin-auth-sdk</Code> 4.1.0 (
+            <ExternalLink href="https://github.com/SU-SWS/weblogin-auth-sdk/pull/106">weblogin-auth-sdk#106</ExternalLink>
+            ). Earlier versions require the encryption pair as well.
           </p>
         </Callout>
         <article>
@@ -377,10 +377,10 @@ export default function GuidePage() {
         </article>
         <Callout title="Signed metadata needs an SDK fix">
           <p>
-            <Code>weblogin-auth-sdk</Code> 3.0.5 and earlier produce signed metadata with an invalid signature (
+            <Code>weblogin-auth-sdk</Code> 4.1.0 and earlier produce signed metadata with an invalid signature (
             <ExternalLink href="https://github.com/SU-SWS/weblogin-auth-sdk/pull/104">weblogin-auth-sdk#104</ExternalLink>
-            ). Until a release includes the fix, <Code>npm run metadata</Code> stops with an explanation instead of writing a
-            broken file.
+            ). Until you&apos;re on a release with the fix, <Code>npm run metadata</Code> stops with an explanation instead
+            of writing a broken file.
           </p>
         </Callout>
         <Panel>

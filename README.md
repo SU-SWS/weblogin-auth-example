@@ -72,7 +72,7 @@ To run this example locally:
 
 4. Generate certificates (if needed):
    ```bash
-   npm run generate-certs
+   npm run certs
    ```
 
 5. Start the development server:

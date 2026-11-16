@@ -8,7 +8,7 @@ Its code samples are read from this repo's files when the page renders, so they 
 
 ## Checklist
 
-1. **Prerequisites:** Next.js 16 (App Router), Node.js 20.9+, access to [SPDB](https://spdb.stanford.edu), and `npm install weblogin-auth-sdk@^3`.
+1. **Prerequisites:** Next.js 16 (App Router), Node.js 22.13+ (required by `weblogin-auth-sdk` 4), access to [SPDB](https://spdb.stanford.edu), and `npm install weblogin-auth-sdk@^4.1.1`.
 2. **Keys:** a signing key pair (required) and optionally an encryption pair. Generate them for 10 years: `openssl req -x509 -newkey rsa:2048 -nodes -days 3650 ...`, or `npm run certs` in this repo.
 3. **Environment variables:** see the guide. Always set `idpCert` explicitly: without it the SDK reads the IdP cert from `WEBLOGIN_AUTH_SAML_CERT`, which here holds the SP cert.
 4. **Configure the SDK:** [lib/saml-config.ts](lib/saml-config.ts) and [lib/auth.ts](lib/auth.ts) (lazy initialization).
@@ -17,4 +17,4 @@ Its code samples are read from this repo's files when the page renders, so they 
 7. **Run locally over HTTPS:** `next dev --experimental-https`, return origin `https://localhost:3000`.
 8. **Register in SPDB:** `npm run metadata -- --origin https://your-app.stanford.edu` ([scripts/generate-metadata.mjs](scripts/generate-metadata.mjs)). Never register metadata generated on localhost.
 9. **Deploy:** [netlify.toml](netlify.toml) loads keys from Vault. `npm run check-certs` runs before every build.
-10. **Keep it running:** renew metadata in SPDB before its `validUntil` date (one year out), and follow the guide's cutover order when rotating certificates.
+10. **Keep it running:** renew metadata in SPDB before its `validUntil` date (one year out by default, see `metadataValidityDays`), and follow the guide's cutover order when rotating certificates.

@@ -211,7 +211,7 @@ export default function GuidePage() {
         <Bullets
           items={[
             'A Next.js 16 app using the App Router',
-            <>Node.js 20.9 or later (this site uses Node 24)</>,
+            <>Node.js 22.13 or later, required by weblogin-auth-sdk 4 (this site uses Node 24)</>,
             <>
               Access to <ExternalLink href="https://spdb.stanford.edu">SPDB</ExternalLink> to register a Service Provider
             </>,
@@ -220,7 +220,7 @@ export default function GuidePage() {
               can&apos;t change after registration.
             </>,
             <>
-              <Code>npm install weblogin-auth-sdk@^3</Code>
+              <Code>npm install weblogin-auth-sdk@^4.1.1</Code>
             </>,
           ]}
         />
@@ -252,11 +252,11 @@ export default function GuidePage() {
             </tbody>
           </table>
         </div>
-        <Callout title="SDK version note">
+        <Callout title="Encryption: set both or neither">
           <p>
-            Encryption is optional from <Code>weblogin-auth-sdk</Code> 4.1.0 (
-            <ExternalLink href="https://github.com/SU-SWS/weblogin-auth-sdk/pull/106">weblogin-auth-sdk#106</ExternalLink>
-            ). Earlier versions require the encryption pair as well.
+            The SDK rejects a config with only half of the encryption pair. A certificate without its key would tell the IdP
+            to encrypt assertions your app can&apos;t decrypt. (Encryption is optional from <Code>weblogin-auth-sdk</Code>{' '}
+            4.1.0; 3.x requires it.)
           </p>
         </Callout>
         <article>
@@ -375,12 +375,11 @@ export default function GuidePage() {
           </p>
           <CodeBlock code={metadataCode} filename="Terminal" />
         </article>
-        <Callout title="Signed metadata needs an SDK fix">
+        <Callout title="Use weblogin-auth-sdk 4.1.1 or later">
           <p>
-            <Code>weblogin-auth-sdk</Code> 4.1.0 and earlier produce signed metadata with an invalid signature (
+            Earlier versions produce signed metadata with an invalid signature (
             <ExternalLink href="https://github.com/SU-SWS/weblogin-auth-sdk/pull/104">weblogin-auth-sdk#104</ExternalLink>
-            ). Until you&apos;re on a release with the fix, <Code>npm run metadata</Code> stops with an explanation instead
-            of writing a broken file.
+            ). On those versions <Code>npm run metadata</Code> stops with an explanation instead of writing a broken file.
           </p>
         </Callout>
         <Panel>
@@ -422,7 +421,8 @@ export default function GuidePage() {
       <Section id="maintain" title="Keep it running">
         <Callout tone="warning" title="Renew your metadata every year">
           <p>
-            Generated metadata has a <Code>validUntil</Code> date one year out. <strong>When it passes, SPDB disables your SP
+            Generated metadata has a <Code>validUntil</Code> date one year out (change it with <Code>metadataValidityDays</Code>{' '}
+            in <Code>lib/saml-config.ts</Code>). <strong>When it passes, SPDB disables your SP
             configuration and logins stop.</strong> Put a reminder in your calendar a few weeks before that date, then run{' '}
             <Code>npm run metadata</Code> again and upload the new file to SPDB.
           </p>
@@ -483,7 +483,7 @@ export default function GuidePage() {
                 ['Logins fail right after a key change', 'SPDB metadata and the app’s keys don’t match. Finish the rotation.'],
                 [
                   <><Code>npm run metadata</Code> says the signature doesn&apos;t verify</>,
-                  'Your SDK has the validUntil signing bug (step 7), or the cert and private key are from different pairs.',
+                  'Your SDK is older than 4.1.1 (step 7), or the cert and private key are from different pairs.',
                 ],
               ].map(([symptom, cause], i) => (
                 <tr key={i} className="border-t border-gray-700">

@@ -72,6 +72,14 @@ export default async function Header() {
         {/* Main navigation with proper landmark for screen readers */}
         <nav aria-label="Main navigation">
           <div className="flex items-center gap-4">
+            {/* Implementation guide */}
+            <Link
+              href="/guide"
+              className="text-gray-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+            >
+              Guide
+            </Link>
+
             {/* GitHub link - opens in new tab */}
             <a
               href="https://github.com/SU-SWS/weblogin-auth-sdk"

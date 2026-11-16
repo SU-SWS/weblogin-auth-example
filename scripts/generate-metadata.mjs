@@ -118,8 +118,8 @@ if (samlConfig.signMetadata) {
   if (!valid) {
     fail(
       'The metadata signature does not verify against WEBLOGIN_AUTH_SAML_CERT, so nothing was written.\n' +
-        '  weblogin-auth-sdk 3.0.5 and earlier add validUntil after signing, which invalidates the signature\n' +
-        '  (fixed by https://github.com/SU-SWS/weblogin-auth-sdk/pull/104). Upgrade the SDK once the fix is released.\n' +
+        '  weblogin-auth-sdk 4.1.0 and earlier add validUntil after signing, which invalidates the signature\n' +
+        '  (fixed by https://github.com/SU-SWS/weblogin-auth-sdk/pull/104). Upgrade to the first release with the fix.\n' +
         '  If you are already on a fixed version, check that WEBLOGIN_AUTH_SAML_CERT matches WEBLOGIN_AUTH_SAML_PRIVATE_KEY.'
     );
   }

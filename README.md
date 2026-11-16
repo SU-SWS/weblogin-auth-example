@@ -33,9 +33,9 @@ This example demonstrates:
 
 ### Prerequisites
 
-- Node.js 20.9+ (this repo uses Node 24, see `.nvmrc`)
+- Node.js 22.13+, required by `weblogin-auth-sdk` 4 (this repo uses Node 24, see `.nvmrc`)
 - A registered SAML Service Provider in [SPDB](https://spdb.stanford.edu)
-- A signing key pair (required) and an encryption key pair (optional from `weblogin-auth-sdk` 4.1.0, [#106](https://github.com/SU-SWS/weblogin-auth-sdk/pull/106); earlier versions require it). `npm run certs` generates one pair used for both.
+- A signing key pair (required) and an encryption key pair (optional). `npm run certs` generates one pair used for both.
 
 ### Installation
 
@@ -100,7 +100,7 @@ npm run metadata -- --origin https://your-app.stanford.edu
 
 `npm run check-certs` (also run automatically before every `npm run build`) warns when a SAML certificate expires within 60 days or has expired, and when a private key doesn't match its certificate. It only warns and never fails the build, so check your build logs for `⚠` lines.
 
-> Signed metadata needs a `weblogin-auth-sdk` release that includes [SU-SWS/weblogin-auth-sdk#104](https://github.com/SU-SWS/weblogin-auth-sdk/pull/104). Until then the script stops with an explanation instead of writing a broken file.
+> Signed metadata needs `weblogin-auth-sdk` 4.1.1 or later ([SU-SWS/weblogin-auth-sdk#104](https://github.com/SU-SWS/weblogin-auth-sdk/pull/104)). On older versions the script stops with an explanation instead of writing a broken file.
 
 ## Project Structure
 

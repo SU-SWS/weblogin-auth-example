@@ -31,7 +31,7 @@ Local development and deploy previews can share the production Entity ID. The SD
 | Signing (`privateKey`, `cert`) | **Required** | Signing AuthnRequests and metadata |
 | Encryption (`decryptionPvk`, `decryptionCert`) | Optional (see note) | Letting the IdP encrypt assertions to you |
 
-> **Note:** `weblogin-auth-sdk` 3.0.5 and earlier require the encryption pair as well. It becomes optional once [SU-SWS/weblogin-auth-sdk#106](https://github.com/SU-SWS/weblogin-auth-sdk/pull/106) is released. If you use encryption, always set both the key and the certificate.
+> **Note:** encryption is optional from `weblogin-auth-sdk` 4.1.0 ([SU-SWS/weblogin-auth-sdk#106](https://github.com/SU-SWS/weblogin-auth-sdk/pull/106)). Earlier versions require the encryption pair as well. If you use encryption, always set both the key and the certificate.
 
 Generate a self-signed certificate valid for 10 years:
 
@@ -256,8 +256,12 @@ SAML requires HTTPS.
 
 1. Generate metadata **for your production URL**. Don't download it from localhost: the ACS URL inside it would point at `https://localhost:3000` and production logins would go there.
    - Deploy the site, then download `https://your-app.stanford.edu/api/auth/metadata`.
+<<<<<<< HEAD
    - Or generate it offline: copy [scripts/generate-metadata.mjs](scripts/generate-metadata.mjs) and [lib/saml-config.ts](lib/saml-config.ts) from this repo, then run `npm run metadata -- --origin https://your-app.stanford.edu`. It refuses localhost origins and checks the signature before writing.
    - **Known issue:** with `signMetadata: true`, `weblogin-auth-sdk` 3.0.5 and earlier produce metadata whose signature is invalid. Fixed by [SU-SWS/weblogin-auth-sdk#104](https://github.com/SU-SWS/weblogin-auth-sdk/pull/104). Upgrade once it's released before submitting signed metadata.
+=======
+   - **Known issue:** with `signMetadata: true`, `weblogin-auth-sdk` 4.1.0 and earlier produce metadata whose signature is invalid. Fixed by [SU-SWS/weblogin-auth-sdk#104](https://github.com/SU-SWS/weblogin-auth-sdk/pull/104): upgrade to the first release that includes it before submitting signed metadata.
+>>>>>>> docs/fix-installation-guide
 2. Create a new SP configuration in [SPDB](https://spdb.stanford.edu), using your Entity ID and the metadata file.
 3. Request the attributes your app needs (for example `uid`, `displayName`, `mail`, `eduPersonAffiliation`).
 4. Wait for the IdP to pick up the configuration before testing.

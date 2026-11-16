@@ -95,6 +95,10 @@ npm run metadata -- --origin https://your-app.stanford.edu
 - Refuses localhost origins, and refuses to write metadata whose signature doesn't verify.
 - Run it again before `validUntil` (one year out) and upload the new file to SPDB. SPDB disables the SP configuration once `validUntil` passes.
 
+### Certificate checks
+
+`npm run check-certs` (also run automatically before every `npm run build`) warns when a SAML certificate expires within 60 days or has expired, and when a private key doesn't match its certificate. It only warns and never fails the build, so check your build logs for `⚠` lines.
+
 > Signed metadata needs a `weblogin-auth-sdk` release that includes [SU-SWS/weblogin-auth-sdk#104](https://github.com/SU-SWS/weblogin-auth-sdk/pull/104). Until then the script stops with an explanation instead of writing a broken file.
 
 ## Project Structure

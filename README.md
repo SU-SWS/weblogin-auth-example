@@ -21,6 +21,7 @@ This example demonstrates:
 | `/protected` | Protected page demonstrating route protection with code examples |
 | `/session` | Session inspector with ability to add custom attributes |
 | `/csrf-demo` | Interactive CSRF protection demonstration |
+| `/skip-validation` | How one SPDB registration serves localhost, previews and production |
 | `/api/auth/login` | Initiates SAML login flow |
 | `/api/auth/logout` | Terminates session and logs out |
 | `/api/auth/callback` | Handles SAML assertion response |
@@ -31,9 +32,9 @@ This example demonstrates:
 
 ### Prerequisites
 
-- Node.js 18+ 
-- A registered SAML Service Provider with Stanford's IdP
-- SSL certificates for signed SAML requests (optional but recommended)
+- Node.js 20.9+ (this repo uses Node 24, see `.nvmrc`)
+- A registered SAML Service Provider in [SPDB](https://spdb.stanford.edu)
+- A signing key pair (required) and an encryption key pair (optional once [weblogin-auth-sdk#106](https://github.com/SU-SWS/weblogin-auth-sdk/pull/106) is released, required in 3.0.5 and earlier). `npm run certs` generates one pair used for both.
 
 ### Installation
 
@@ -61,11 +62,11 @@ To run this example locally:
    # Session Configuration
    WEBLOGIN_AUTH_SESSION_SECRET=your-secret-key-min-32-chars
    
-   # Optional: Signing Keys
+   # Signing Keys (required)
    WEBLOGIN_AUTH_SAML_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
    WEBLOGIN_AUTH_SAML_CERT="-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
    
-   # Optional: Decryption Keys
+   # Encryption Keys (optional, set both or neither)
    WEBLOGIN_AUTH_SAML_DECRYPTION_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
    WEBLOGIN_AUTH_SAML_DECRYPTION_CERT="-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
    ```
@@ -80,7 +81,7 @@ To run this example locally:
    npm run dev
    ```
 
-6. Open [http://localhost:3000](http://localhost:3000) in your browser.
+6. Open [https://localhost:3000](https://localhost:3000) in your browser. The dev server runs over HTTPS because SAML requires it.
 
 ## Project Structure
 

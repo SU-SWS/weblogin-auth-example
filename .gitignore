@@ -41,3 +41,5 @@ yarn-error.log*
 next-env.d.ts
 
 certificates
+# generated SPDB metadata (npm run metadata)
+/sp-metadata*.xml

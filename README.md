@@ -18,6 +18,7 @@ This example demonstrates:
 | Page | Description |
 |------|-------------|
 | `/` | Home page with feature overview |
+| `/guide` | Step-by-step implementation guide, with code read from this repo |
 | `/protected` | Protected page demonstrating route protection with code examples |
 | `/session` | Session inspector with ability to add custom attributes |
 | `/csrf-demo` | Interactive CSRF protection demonstration |
@@ -38,7 +39,7 @@ This example demonstrates:
 
 ### Installation
 
-For detailed step-by-step instructions on integrating the Weblogin Auth SDK into your own Next.js application, see the **[Installation Guide](installation.md)**.
+For step-by-step instructions on integrating the Weblogin Auth SDK into your own Next.js application, see the **[Implementation Guide](https://weblogin-auth-example.netlify.app/guide)** (also at `/guide` when running locally, with a checklist in [installation.md](installation.md)).
 
 To run this example locally:
 
@@ -83,6 +84,24 @@ To run this example locally:
 
 6. Open [https://localhost:3000](https://localhost:3000) in your browser. The dev server runs over HTTPS because SAML requires it.
 
+## Registering and Renewing in SPDB
+
+Generate metadata for SPDB from the app's real SAML config and your current keys:
+
+```bash
+npm run metadata -- --origin https://your-app.stanford.edu
+```
+
+- Writes `sp-metadata.xml` and prints the Entity ID, ACS URL, `validUntil` and certificate expiry dates.
+- Refuses localhost origins, and refuses to write metadata whose signature doesn't verify.
+- Run it again before `validUntil` (one year out) and upload the new file to SPDB. SPDB disables the SP configuration once `validUntil` passes.
+
+### Certificate checks
+
+`npm run check-certs` (also run automatically before every `npm run build`) warns when a SAML certificate expires within 60 days or has expired, and when a private key doesn't match its certificate. It only warns and never fails the build, so check your build logs for `⚠` lines.
+
+> Signed metadata needs `weblogin-auth-sdk` 4.1.1 or later ([SU-SWS/weblogin-auth-sdk#104](https://github.com/SU-SWS/weblogin-auth-sdk/pull/104)). On older versions the script stops with an explanation instead of writing a broken file.
+
 ## Project Structure
 
 ```
@@ -97,7 +116,9 @@ To run this example locally:
 │   ├── page.tsx           # Home page
 │   └── not-found.tsx      # Custom 404 page
 ├── lib/
-│   └── auth.ts            # Auth SDK configuration
+│   ├── auth.ts            # Auth SDK configuration
+│   └── saml-config.ts     # SAML settings, shared with npm run metadata
+├── scripts/               # npm run certs, npm run metadata
 ├── proxy.ts               # Middleware for route protection
 └── certificates/          # Generated SSL certificates
 ```
@@ -133,7 +154,7 @@ const isValid = AuthUtils.validateCSRFToken(submitted, expected);
 
 ## Related Resources
 
-- [Installation Guide](installation.md) - Step-by-step SDK integration instructions
+- [Implementation Guide](https://weblogin-auth-example.netlify.app/guide) - Step-by-step SDK integration instructions ([checklist](installation.md))
 - [Weblogin Auth SDK Documentation](https://github.com/SU-SWS/weblogin-auth-sdk)
 - [Stanford WebLogin](https://uit.stanford.edu/service/webauth)
 - [Next.js Documentation](https://nextjs.org/docs)

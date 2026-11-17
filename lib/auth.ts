@@ -32,7 +32,7 @@
  */
 
 import { createWebLoginNext } from 'weblogin-auth-sdk/next';
-import { idps } from 'weblogin-auth-sdk';
+import { getSamlConfig } from './saml-config';
 
 // Lazy initialization to avoid config validation during edge function bundling
 let _auth: ReturnType<typeof createWebLoginNext> | null = null;
@@ -51,37 +51,11 @@ export function getAuth() {
     _auth = createWebLoginNext({
       /**
        * SAML CONFIGURATION
-       * These settings configure the SAML Service Provider (SP) that
-       * communicates with Stanford's Identity Provider (IdP).
+       * Service Provider settings for Stanford's Identity Provider (IdP).
+       * Defined in lib/saml-config.ts so scripts/generate-metadata.mjs can
+       * build SPDB metadata from exactly the same settings.
        */
-      saml: {
-        // issuer: Your SP Entity ID - must match Stanford registration
-        issuer: process.env.WEBLOGIN_AUTH_SAML_ENTITY!,
-
-        // Use the SDK's built-in IdP presets (prod or uat)
-        entryPoint: idps.prod.entryPoint,
-        idpCert: idps.prod.cert,
-
-        // Base URL for callback - SDK appends /api/auth/callback
-        returnToOrigin: process.env.URL || process.env.WEBLOGIN_AUTH_SAML_RETURN_ORIGIN!,
-
-        // ACS URL path where SAML responses are sent
-        returnToPath: '/api/auth/callback',
-
-        // SIGNING KEYS: Sign outgoing SAML requests for verification
-        privateKey: process.env.WEBLOGIN_AUTH_SAML_PRIVATE_KEY!,
-        cert: process.env.WEBLOGIN_AUTH_SAML_CERT!,
-
-        // Sign metadata XML (required when skipRequestAcsUrl is true)
-        signMetadata: true,
-
-        // Use current ACS URL from metadata instead of hardcoded one in IDP.
-        skipRequestAcsUrl: process.env.WEBLOGIN_AUTH_SAML_SKIP_ACS_VALIDATION === 'true',
-
-        // DECRYPTION KEYS: Decrypt encrypted SAML assertions
-        decryptionPvk: process.env.WEBLOGIN_AUTH_SAML_DECRYPTION_KEY!,
-        decryptionCert: process.env.WEBLOGIN_AUTH_SAML_DECRYPTION_CERT!,
-      },
+      saml: getSamlConfig(),
 
       /**
        * SESSION CONFIGURATION

@@ -4,10 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev --experimental-https",
+    "prebuild": "node ./scripts/check-certs.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "certs": "node ./scripts/generate-certs.mjs",
+    "check-certs": "node ./scripts/check-certs.mjs",
+    "metadata": "node --experimental-strip-types --no-warnings=ExperimentalWarning ./scripts/generate-metadata.mjs",
     "vault": "netlify-plugin-vault-variables",
     "vault:local": "NODE_ENV=development netlify-plugin-vault-variables"
   },
@@ -27,6 +30,7 @@
     "eslint-config-next": "16.4.6",
     "netlify-plugin-vault-variables": "^3.0.3",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "xml-crypto": "^6.4.0"
   }
 }

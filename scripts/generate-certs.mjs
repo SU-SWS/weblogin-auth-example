@@ -1,21 +1,25 @@
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+import { execSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const certsDir = path.join(process.cwd(), 'certificates');
 if (!fs.existsSync(certsDir)) {
   fs.mkdirSync(certsDir);
 }
 
-console.log('Generating self-signed certificate...');
+// SAML SP certificates are trusted by being pinned in the IdP's metadata, not
+// through a CA chain, so a long lifetime avoids frequent re-registration.
+const CERT_VALIDITY_DAYS = 3650; // 10 years
+
+console.log(`Generating self-signed certificate (valid ${CERT_VALIDITY_DAYS} days)...`);
 try {
   // Generate key and cert
   // -nodes: Don't encrypt the private key
   execSync(
-    'openssl req -x509 -newkey rsa:2048 -keyout certificates/sp-key.pem -out certificates/sp-cert.pem -days 365 -nodes -subj "/CN=localhost"',
+    `openssl req -x509 -newkey rsa:2048 -keyout certificates/sp-key.pem -out certificates/sp-cert.pem -days ${CERT_VALIDITY_DAYS} -nodes -subj "/CN=localhost"`,
     { stdio: 'inherit', cwd: process.cwd() }
   );
-} catch (e) {
+} catch {
   console.error('Failed to generate certificates. Make sure openssl is installed and in your PATH.');
   process.exit(1);
 }

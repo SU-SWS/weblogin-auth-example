@@ -36,6 +36,8 @@ import { auth } from '@/lib/auth';
 export async function POST(request: Request) {
   // Process the SAML response and create a session
   // This handles all validation, decryption, and session creation
+  // `user` and `session` are destructured to show what's available (see below).
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { returnTo, user, session } = await auth.authenticate(request);
 
   // At this point you have access to the authenticated user's data!

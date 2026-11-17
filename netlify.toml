@@ -16,7 +16,7 @@
       # Order doesn't matter here as these will be fetched asynchronously. Try not to have dupes.
       secrets = ['secret/data/projects/uit-webservices/weblogin-auth-sdk']
       # Set which environment variables to use for the approle login
-      secretId = 'VAULT_SECRET_ID'
-      roleId = 'VAULT_ROLE_ID'
+      secretId = 'VAULT_SWS_SECRET_ID'
+      roleId = 'VAULT_SWS_ROLE_ID'
       # Set to true if you want to add the context to the .env file for runtime.
       addContext = true
